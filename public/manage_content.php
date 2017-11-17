@@ -1,54 +1,35 @@
 <?php require_once('../includes/db_connection.php'); ?>
 <?php require_once('../includes/functions.php'); ?>
 <?php include('../includes/layouts/header.php'); ?>
+<?php
+  if (isset($_GET['subject'])) {
+    $selected_subject_id = $_GET['subject'];
+    $selected_page_id = null;
+  }
+  else if (isset($_GET['page'])) {
+    $selected_page_id = $_GET['page'];
+    $selected_subject_id = null;
+  }
+  else {
+    $selected_page_id = null;
+    $selected_subject_id = null;
+  }
+ ?>
 
 <div id="main">
   <div id="navigation">
-    <ul class="subjects">
-
-      <?php
-      $query = "SELECT * ";
-      $query .= "FROM subjects ";
-      $query .= "WHERE visible = 1 ";
-      $query .= "ORDER BY position ASC ";
-      $subject_set = mysqli_query($connection, $query);
-      confirm_query($subject_set); // in functions.php
-
-      while($subject = mysqli_fetch_assoc($subject_set))
-      {
-      ?>
-        <li>
-        <?php echo $subject['menu_name']; ?>
-        <ul class="pages">
-          <?php
-          $query = "SELECT * ";
-          $query .= "FROM pages ";
-          $query .= "WHERE visible = 1 ";
-          $query .= "AND subject_id = {$subject['id']} ";
-          $query .= "ORDER BY position ASC ";
-          $page_set = mysqli_query($connection, $query);
-          confirm_query($page_set); // in functions.php
-           ?>
-           <?php
-           while($page = mysqli_fetch_assoc($page_set))
-           {
-           ?>
-            <li><?php echo $page['menu_name']; ?></li>
-           <?php
-           }
-           mysqli_free_result($page_set);
-           ?>
-        </ul>
-        </li>
-      <?php
-      }
-      mysqli_free_result($subject_set);
-      ?>
-
-      </ul>
+    <?php echo navigation($selected_subject_id, $selected_page_id); ?>
   </div>
   <div id="page">
     <h2>Manage Content</h2>
+    <?php if ($selected_subject_id) { ?>
+    <?php $current_subject = find_subject_by_id($selected_subject_id) ?>
+    <?php echo $current_subject['menu_name']; ?>
+    <?php } else if ($selected_page_id) {?>
+    <?php echo $selected_page_id; ?>
+    <?php } else { ?>
+      Please select a subject or a page.
+    <?php } ?>
   </div>
 </div>
 <?php include('../includes/layouts/footer.php'); ?>
