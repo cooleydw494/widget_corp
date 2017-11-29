@@ -1,15 +1,24 @@
 <?php
+
+  function redirect_to($new_location) {
+    header("Location: " . $new_location);
+    exit;
+  }
+
+  function mysql_prep($string) {
+    global $connection;
+    return mysqli_real_escape_string($connection, $string);
+  }
+
   // confirm a query got a result (empty set still counts)
-  function confirm_query($result_set)
-  {
+  function confirm_query($result_set) {
     if (!$result_set)
     {
       die("Database query failed.");
     }
   }
 
-  function find_all_subjects()
-  {
+  function find_all_subjects() {
     global $connection;
     $query = "SELECT * ";
     $query .= "FROM subjects ";
@@ -20,8 +29,7 @@
     return $subject_set;
   }
 
-  function find_pages_for_subject($subject_id)
-  {
+  function find_pages_for_subject($subject_id) {
     global $connection;
     $safe_subject_id = mysqli_real_escape_string($connection, $subject_id);
     $query = "SELECT * ";
@@ -34,17 +42,16 @@
     return $page_set;
   }
 
-  // takes two arguments, currently selected subject id if any
-  // and currently selected page id if any
-  function navigation($subject_id, $page_id)
-  {
-    $output = '<ul class="subjects">';
+  // takes two arguments, currently selected subject array or null
+  // and currently selected page array or null
+  function navigation($subject_array, $page_array) {
+      $output = '<ul class="subjects">';
 
       $subject_set = find_all_subjects();
       while($subject = mysqli_fetch_assoc($subject_set))
       {
         $output .= '<li ';
-        if ($subject_id == $subject['id']) {
+        if ($subject && $subject_array['id'] == $subject['id']) {
           $output .= 'class="selected"';
         }
         $output .= '><a href="manage_content.php?subject=';
@@ -57,7 +64,7 @@
         while($page = mysqli_fetch_assoc($page_set))
         {
           $output .= '<li ';
-          if ($page_id == $page['id']) {
+          if ($page_array && $page_array['id'] == $page['id']) {
             $output .= 'class="selected"';
           }
           $output .= '><a href="manage_content.php?page=';
@@ -74,6 +81,23 @@
     return $output;
   }
 
+  function find_selected_page() {
+    global $current_subject;
+    global $current_page;
+    if (isset($_GET['subject'])) {
+      $current_subject = find_subject_by_id($_GET['subject']);
+      $current_page = null;
+    }
+    else if (isset($_GET['page'])) {
+      $current_page = find_page_by_id($_GET['page']);
+      $current_subject = null;
+    }
+    else {
+      $current_page = null;
+      $current_subject = null;
+    }
+  }
+
   function find_subject_by_id($subject_id) {
     global $connection;
     $safe_subject_id = mysqli_real_escape_string($connection, $subject_id);
@@ -85,6 +109,22 @@
     confirm_query($subject_set); // in functions.php
     if ($subject = mysqli_fetch_assoc($subject_set)) {
       return $subject;
+    } else {
+      return null;
+    }
+  }
+
+  function find_page_by_id($page_id) {
+    global $connection;
+    $safe_page_id = mysqli_real_escape_string($connection, $page_id);
+    $query = "SELECT * ";
+    $query .= "FROM pages ";
+    $query .= "WHERE id = {$safe_page_id} ";
+    $query .= "LIMIT 1";
+    $page_set = mysqli_query($connection, $query);
+    confirm_query($page_set); // in functions.php
+    if ($page = mysqli_fetch_assoc($page_set)) {
+      return $page;
     } else {
       return null;
     }
