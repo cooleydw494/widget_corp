@@ -60,10 +60,27 @@ ul.pages { padding-left: 2em; list-style: square; font-weight: normal; }
 #page h2 { color: #8D0D19; margin-top: 1em;}
 #page h3 { color: #8D0D19; }
 
+.view-content {
+  margin: 1em;
+  padding: 1em;
+  border: 1px solid #999;
+}
+
 div.message {
   border: 2px solid #8D0D19;
   color: #8D0D19;
   font-weight: bold;
   margin: 1em 0;
   padding: 1em;
+}
+
+/* errors */
+.error {
+  color: #8D0D19;
+  border: 2px solid #8D0D19;
+  margin: 1em 0;
+  padding: 1em;
+}
+.error ul {
+  padding-left: 2em;
 }
