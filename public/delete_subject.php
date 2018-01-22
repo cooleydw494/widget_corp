@@ -10,7 +10,7 @@ if (!$current_subject) {
 }
 else {
 
-  $pages_set = find_pages_for_subject($current_subject['id']);
+  $pages_set = find_pages_for_subject($current_subject['id'], false);
   if (mysqli_num_rows($pages_set) > 0) {
     //failure
     $_SESSION['message'] = "You cannot delete a subject with pages";

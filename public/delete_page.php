@@ -3,7 +3,7 @@
 <?php require_once('../includes/functions.php'); ?>
 <?php
 //verify there is a current page
-$current_page = find_page_by_id($_GET['page']);
+$current_page = find_page_by_id($_GET['page'], false);
 if (!$current_page) {
   $_SESSION['message'] = 'Error: no page selected';
   redirect_to('manage_content.php');
