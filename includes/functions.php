@@ -18,6 +18,34 @@
     }
   }
 
+  function find_all_admins() {
+    global $connection;
+    $query = "SELECT * ";
+    $query .= "FROM admins ";
+    $query .= "ORDER BY username ASC ";
+    $admin_set = mysqli_query($connection, $query);
+    confirm_query($admin_set);
+    return $admin_set;
+  }
+
+  function find_admin_by_id($admin_id) {
+    global $connection;
+    $safe_admin_id = mysqli_real_escape_string($connection, $admin_id);
+
+    $query = "SELECT * ";
+    $query .= "FROM admins ";
+    $query .= "WHERE id = {$safe_admin_id} ";
+    $query .= "LIMIT 1";
+
+    $selected_admin = mysqli_query($connection, $query);
+    confirm_query($selected_admin);
+    if ($admin = mysqli_fetch_assoc($selected_admin)) {
+      return $admin;
+    } else {
+      return null;
+    }
+  }
+
   function find_all_subjects($public = true) {
     global $connection;
     $query = "SELECT * ";
@@ -210,4 +238,30 @@
       $output .= "</div>";
     }
     return $output;
+  }
+
+  function password_encrypt($password) {
+    $hash_format = "$2y$10$";
+    $salt_length = 22;
+    $salt = generate_salt($salt_length);
+    $format_and_salt = $hash_format . $salt;
+    $hash = crypt($password, $format_and_salt);
+    return $hash;
+  }
+
+  function generate_salt($length) {
+    $unique_random_string = md5(uniqid(mt_rand(), true));
+    $base64_string = base64_encode($unique_random_string);
+    $modified_base64_string = str_replace('+', '.', $base64_string);
+    $salt = substr($modified_base64_string, 0 , $length);
+    return $salt;
+  }
+
+  function password_check($password, $existing_hash) {
+    $hash = crypt($password, $existing_hash);
+    if ($hash == $existing_hash) {
+      return true;
+    } else {
+      return false;
+    }
   }
