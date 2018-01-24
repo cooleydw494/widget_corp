@@ -1,6 +1,7 @@
-<?php require_once('../includes/session.php') ?>
 <?php require_once('../includes/db_connection.php'); ?>
 <?php require_once('../includes/functions.php'); ?>
+<?php require_once('../includes/session.php'); ?>
+<?php confirm_logged_in(); ?>
 <?php
 //verify there is a current page
 $current_page = find_page_by_id($_GET['page'], false);
