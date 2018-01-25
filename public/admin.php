@@ -9,6 +9,7 @@
       </div>
       <div id="page">
         <h2>Admin Menu</h2>
+        <?php echo message(); ?>
         <p>Welcome to the admin area, <?php echo htmlentities($_SESSION['username']); ?></p>
         <ul>
           <li><a href="manage_content.php">Manage Website Content</a></li>

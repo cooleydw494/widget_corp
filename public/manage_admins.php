@@ -8,7 +8,8 @@
 
 <div id="main">
   <div id="navigation">
-    &nbsp;
+    <br />
+    <a href="admin.php">Main Menu</a>
   </div>
   <div id="page">
     <?php echo message(); ?>
